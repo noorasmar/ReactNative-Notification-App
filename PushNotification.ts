@@ -1,7 +1,9 @@
+
+
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert} from 'react-native';
-import {PermissionsAndroid} from 'react-native'; // Import PermissionsAndroid
+import {PermissionsAndroid} from 'react-native';
 
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -30,8 +32,6 @@ const getFCMToken = async () => {
 };
 
 export const NotificationServices = () => {
-  // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
   messaging().onNotificationOpenedApp(remoteMessage => {
     console.log(
       'Notification caused app to open from background state:',
@@ -39,7 +39,6 @@ export const NotificationServices = () => {
     );
   });
 
-  // Check whether an initial notification is available
   messaging()
     .getInitialNotification()
     .then(remoteMessage => {
@@ -66,10 +65,8 @@ export async function requestNotificationPermission() {
     );
 
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      // Permission granted, you can proceed with calling requestUserPermission() or other notification-related logic.
       requestUserPermission();
     } else {
-      // Permission denied or not granted. Handle the case where the user denied permission.
     }
   } catch (error) {
     console.error('Error requesting notification permission:', error);

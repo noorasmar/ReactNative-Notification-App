@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, {useEffect} from 'react';
 import {Text, View} from 'react-native';
 import {
@@ -19,6 +12,7 @@ function App(): JSX.Element {
     requestUserPermission();
     NotificationServices();
   }, []);
+
   return (
     <View>
       <Text>test</Text>
