@@ -4,10 +4,12 @@ import {
   requestUserPermission,
   NotificationServices,
   requestNotificationPermission,
+  getForegroundNotification,
 } from './PushNotification';
 
 function App(): JSX.Element {
   useEffect(() => {
+    getForegroundNotification();
     requestNotificationPermission();
     requestUserPermission();
     NotificationServices();

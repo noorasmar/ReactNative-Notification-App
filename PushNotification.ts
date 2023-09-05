@@ -1,9 +1,23 @@
-
-
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
+import PushNotification from 'react-native-push-notification';
+
+export async function requestNotificationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      requestUserPermission();
+    } else {
+    }
+  } catch (error) {
+    console.error('Error requesting notification permission:', error);
+  }
+}
 
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -16,20 +30,6 @@ export async function requestUserPermission() {
     getFCMToken();
   }
 }
-
-const getFCMToken = async () => {
-  const fcmToken = await AsyncStorage.getItem('fcmToken');
-  console.log('Old FCM Token : ', fcmToken);
-  if (!fcmToken) {
-    try {
-      let fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        console.log('new FCM Token : ', fcmToken);
-        await AsyncStorage.setItem('fcmToken', fcmToken);
-      }
-    } catch (error) {}
-  }
-};
 
 export const NotificationServices = () => {
   messaging().onNotificationOpenedApp(remoteMessage => {
@@ -58,17 +58,29 @@ export const NotificationServices = () => {
   return unsubscribe;
 };
 
-export async function requestNotificationPermission() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    );
-
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      requestUserPermission();
-    } else {
-    }
-  } catch (error) {
-    console.error('Error requesting notification permission:', error);
+const getFCMToken = async () => {
+  const fcmToken = await AsyncStorage.getItem('fcmToken');
+  console.log('Old FCM Token : ', fcmToken);
+  if (!fcmToken) {
+    try {
+      let fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        console.log('new FCM Token : ', fcmToken);
+        await AsyncStorage.setItem('fcmToken', fcmToken);
+      }
+    } catch (error) {}
   }
-}
+};
+
+export const getForegroundNotification = () => {
+  const unsubscribe = messaging().onMessage(async remoteMessage => {
+    PushNotification.localNotification({
+      message: remoteMessage.notification.body,
+      title: remoteMessage.notification.title,
+      bigPictureUrl: remoteMessage.notification.android.imageUrl,
+      smallIcon: remoteMessage.notification.android.imageUrl,
+    });
+  });
+
+  return unsubscribe;
+};
