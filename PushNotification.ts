@@ -32,13 +32,6 @@ export async function requestUserPermission() {
 }
 
 export const NotificationServices = () => {
-  messaging().onNotificationOpenedApp(remoteMessage => {
-    console.log(
-      'Notification caused app to open from background state:',
-      remoteMessage.notification,
-    );
-  });
-
   messaging()
     .getInitialNotification()
     .then(remoteMessage => {
